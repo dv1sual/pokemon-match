@@ -149,6 +149,7 @@ class PokemonFightClub(QMainWindow):
 
         self.tabs.setCurrentIndex(1)  # Switch to the "2nd Round" tab
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mainWin = PokemonFightClub()
