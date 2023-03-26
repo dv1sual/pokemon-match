@@ -14,13 +14,13 @@ Features
 Installation
 
 To run the Pokemon Fight Club application, you will need Python 3.6 or higher and the PyQt6 library installed. You can install PyQt6 using pip:
-    -pip install PyQt6
+pip install PyQt6
 
 Usage
 
 1. Make sure you have a file named pokemons.txt in the same directory as the script. This file should contain the names of the Pokemon participants, one per line.
 2. Run the main.py script using Python:
-    -python main.py
+python main.py
 3. The application will display the "1st Round" tab with an initially empty table.
 4. Click the "Draw" button to generate the first-round matchups.
 5. Click on a cell in the table to select a winner for each matchup.
