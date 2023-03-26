@@ -14,7 +14,7 @@ class PokemonBattlesClub(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Read the list of pokemons from the 'pokemons.txt' file
+        # Read the list of Pokémon from the 'Pokémon.txt' file
         with open('pokemons.txt', 'r') as f:
             pokemons = f.read().splitlines()
 
@@ -126,7 +126,7 @@ class PokemonBattlesClub(QMainWindow):
         if self.round_done[current_round]:
             return
 
-        # If it's the first round, read the list of pokemons from the file
+        # If it's the first round, read the list of Pokémon from the file
         if current_round == 0:
             with open('pokemons.txt', 'r') as f:
                 pokemons = f.read().splitlines()
@@ -134,7 +134,7 @@ class PokemonBattlesClub(QMainWindow):
             # For subsequent rounds, use the winners from the previous round
             pokemons = self.winners
 
-        # Shuffle the pokemons randomly
+        # Shuffle the Pokémon randomly
         random.shuffle(pokemons)
 
         # Calculate the number of matches for the current round
@@ -149,12 +149,12 @@ class PokemonBattlesClub(QMainWindow):
         # Clear the winners list for the current round
         self.winners = []
 
-        # Populate the matches table with pokemons
+        # Populate the matches table with Pokémon
         for i in range(num_matches):
             p1 = pokemons[2 * i]
             p2 = pokemons[2 * i + 1]
 
-            # Create and configure QTableWidgetItem for the first pokemon (p1)
+            # Create and configure QTableWidgetItem for the first Pokémon (p1)
             item_p1 = QTableWidgetItem(p1)
             item_p1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             item_p1.setFlags(item_p1.flags() | Qt.ItemFlag.ItemIsSelectable)
@@ -163,7 +163,7 @@ class PokemonBattlesClub(QMainWindow):
             # Add the QTableWidgetItem to the matches table
             matches_table.setItem(i, 0, item_p1)
 
-            # Create and configure QTableWidgetItem for the second pokemon (p2)
+            # Create and configure QTableWidgetItem for the second Pokémon (p2)
             item_p2 = QTableWidgetItem(p2)
             item_p2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             item_p2.setFlags(item_p2.flags() | Qt.ItemFlag.ItemIsSelectable)
