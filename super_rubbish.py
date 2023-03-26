@@ -55,7 +55,8 @@ class PokemonFightClub(QMainWindow):
         layout1.addLayout(layout_buttons)
         self.tabs.addTab(tab1, "1st Round")
 
-    def ordinal(self, n):
+    @staticmethod
+    def ordinal(n):
         suffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
         if 10 <= n % 100 <= 20:
             suffix_index = 0
@@ -116,7 +117,6 @@ class PokemonFightClub(QMainWindow):
         self.round_done[current_round] = True
 
     def select_winner(self, row, column):
-        current_round = self.tabs.currentIndex()
         matches_table = self.tabs.currentWidget().findChild(QTableWidget)
 
         winner = matches_table.item(row, column).text()
@@ -139,22 +139,23 @@ class PokemonFightClub(QMainWindow):
             msg.exec()
 
     def reset_draw(self):
+        # Remove all tabs except the first one
         while self.tabs.count() > 1:
             self.tabs.removeTab(self.tabs.count() - 1)
 
+        # Clear the table and the winners list
         self.matches_table.setRowCount(0)
-        self.round_done = {0: False}  # Reset the round_done dictionary
         self.winners = []
 
-        # Reset the initial draw
-        self.generate_matches(0)
+        # Reset the round_done dictionary
+        self.round_done = {0: False}
 
     def next_draw(self):
         if not self.winners:
             return
 
         current_round = self.tabs.currentIndex()
-        self.tabs.addTab(next_round_tab, self.round_name(current_round + 1))
+        next_round = current_round + 1
 
         if self.round_done.get(next_round, False):
             return
@@ -183,7 +184,7 @@ class PokemonFightClub(QMainWindow):
         next_round_tab = QWidget()
         next_round_layout = QVBoxLayout(next_round_tab)
 
-        font = QFont()  # Define the font variable
+        font = QFont()
         font.setBold(True)
 
         next_round_matches_table = QTableWidget(0, 2)
@@ -196,26 +197,22 @@ class PokemonFightClub(QMainWindow):
         next_round_layout.addWidget(next_round_matches_table)
         next_round_layout.addLayout(self.create_bottom_buttons())
 
-        self.tabs.addTab(next_round_tab, self.get_round_name())
-        self.tabs.setCurrentIndex(next_round)
+        self.tabs.addTab(next_round_tab, self.round_name(next_round))  # Moved this line down here
+        self.tabs.setCurrentIndex(next_round)  # Added this line to switch to the new tab
 
         self.generate_matches(next_round)
 
     def round_name(self, round_number):
         total_rounds = math.ceil(math.log2(self.initial_participants))
 
-        if round_number == total_rounds:
+        if round_number == total_rounds - 2:
             return "Final"
-        elif round_number == total_rounds - 1:
+        elif round_number == total_rounds - 3:
             return "Semi Final"
-        elif round_number == total_rounds - 2:
+        elif round_number == total_rounds - 4:
             return "Quarter Final"
-        elif round_number == 1:
-            return "1st Round"
-        elif round_number == 2:
-            return "2nd Round"
         else:
-            return f"{round_number}th Round"
+            return f"{self.ordinal(round_number + 1)} Round"
 
 
 if __name__ == "__main__":
