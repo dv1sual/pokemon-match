@@ -1,6 +1,6 @@
 Pokemon Fight Club
 
-This is a simple Python application that simulates a Pokemon tournament, randomly drawing matchups and allowing the user to select winners. The application uses PyQt6 for the graphical user interface.
+This is a simple Python application that simulates a Pokemon tournament, randomly drawing matchups and allowing the user to select winners. The application uses PyQt6 for the graphical user interface. Perfect for kids who loves to battle with their pokemon action figures.
 
 Features
 
