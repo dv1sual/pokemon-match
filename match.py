@@ -55,16 +55,6 @@ class PokemonFightClub(QMainWindow):
         layout1.addLayout(layout_buttons)
         self.tabs.addTab(tab1, "1st Round")
 
-    @staticmethod
-    def ordinal(n):
-        suffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
-        if 10 <= n % 100 <= 20:
-            suffix_index = 0
-        else:
-            suffix_index = n % 10
-
-        return str(n) + suffix[suffix_index]
-
     def create_bottom_buttons(self):
         layout_buttons = QHBoxLayout()
         draw_button = QPushButton('Draw')
@@ -213,6 +203,16 @@ class PokemonFightClub(QMainWindow):
             return "Quarter Final"
         else:
             return f"{self.ordinal(round_number + 1)} Round"
+
+    @staticmethod
+    def ordinal(n):
+        suffix = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th']
+        if 10 <= n % 100 <= 20:
+            suffix_index = 0
+        else:
+            suffix_index = n % 10
+
+        return str(n) + suffix[suffix_index]
 
 
 if __name__ == "__main__":
