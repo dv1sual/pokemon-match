@@ -316,6 +316,10 @@ if __name__ == "__main__":
     # Create a QApplication instance for managing the application's control flow
     app = QApplication(sys.argv)
 
+    # Set the custom style sheet for the application
+    with open("stylesheet.qss", "r") as file:
+        app.setStyleSheet(file.read())
+
     # Instantiate the main window for the PokemonBattlesClub application
     mainWin = PokemonBattlesClub()
 

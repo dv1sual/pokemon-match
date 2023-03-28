@@ -1,4 +1,3 @@
-app.setStyleSheet("""
 QWidget {
         font-family: "Helvetica Neue",
 }
@@ -54,4 +53,3 @@ QTabBar::tab:hover {
 QTabBar::tab:selected:hover {
         background-color: #0A285F;
 }
-""")
