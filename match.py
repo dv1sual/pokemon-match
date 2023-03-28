@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
     QMessageBox
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QColor
 
 
 class PokemonBattlesClub(QMainWindow):
@@ -190,7 +190,7 @@ class PokemonBattlesClub(QMainWindow):
             item = matches_table.item(row, col)
             if col == column:
                 # Set the winner's cell background color to green
-                item.setBackground(Qt.GlobalColor.green)
+                item.setBackground(QColor("#FFCC00"))
             else:
                 # Set the loser's cell background color to white
                 item.setBackground(Qt.GlobalColor.white)
