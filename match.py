@@ -189,7 +189,7 @@ class PokemonBattlesClub(QMainWindow):
         for col in range(2):
             item = matches_table.item(row, col)
             if col == column:
-                # Set the winner's cell background color to green
+                # Set the winner's cell background color to Pokémon Yellow
                 item.setBackground(QColor("#FFCC00"))
             else:
                 # Set the loser's cell background color to white
