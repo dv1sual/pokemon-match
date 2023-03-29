@@ -1,13 +1,15 @@
 import sys
 import random
 import math
+import requests
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout,
     QHBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
-    QMessageBox
+    QMessageBox, QLabel, QDialog
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QColor
+from PyQt6.QtGui import QFont, QColor, QPixmap
+from io import BytesIO
 
 
 class PokemonBattlesClub(QMainWindow):
@@ -141,7 +143,8 @@ class PokemonBattlesClub(QMainWindow):
         num_matches = len(pokemons) // 2
 
         # Get the appropriate matches table for the current round
-        matches_table = self.matches_table if current_round == 0 else self.tabs.widget(current_round).findChild(QTableWidget)
+        matches_table = self.matches_table if current_round == 0 else \
+            self.tabs.widget(current_round).findChild(QTableWidget)
 
         # Set the number of rows in the matches table
         matches_table.setRowCount(num_matches)
@@ -195,6 +198,9 @@ class PokemonBattlesClub(QMainWindow):
                 # Set the loser's cell background color to white
                 item.setBackground(Qt.GlobalColor.white)
 
+        # Add this line to call the show_pokemon_details function when a Pokémon is clicked
+        self.show_pokemon_details(winner)
+
         # Calculate the remaining competitors in the current round
         competitors_left = matches_table.rowCount() * 2
 
@@ -206,6 +212,47 @@ class PokemonBattlesClub(QMainWindow):
             msg.setIcon(QMessageBox.Icon.Information)
             msg.setStandardButtons(QMessageBox.StandardButton.Ok)
             msg.exec()
+
+    def show_pokemon_details(self, pokemon_name):
+        # Use the PokeAPI to get the Pokémon details
+        api_url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name.lower()}"
+
+        # Fetch the Pokémon data from the API
+        response = requests.get(api_url)
+        pokemon_data = response.json()
+
+        # Extract the necessary details (e.g., image URL, attack, defense, and speed)
+        image_url = pokemon_data["sprites"]["front_default"]
+        stats = {stat["stat"]["name"]: stat["base_stat"] for stat in pokemon_data["stats"]}
+        attack = stats["attack"]
+        defense = stats["defense"]
+        speed = stats["speed"]
+
+        # Download the Pokémon image
+        image_response = requests.get(image_url)
+        image_data = BytesIO(image_response.content)
+
+        # Create a new window (QDialog) for displaying the Pokémon details
+        detail_window = QDialog(self)
+        detail_window.setWindowTitle(f"{pokemon_name.capitalize()}")
+        detail_layout = QVBoxLayout()
+
+        # Display the Pokémon image
+        image_label = QLabel()
+        pixmap = QPixmap()
+        pixmap.loadFromData(image_data.getvalue())
+        image_label.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+        detail_layout.addWidget(image_label)
+
+        # Display the Pokémon statistics (attack, defense, and speed)
+        stats_layout = QHBoxLayout()
+        stats_layout.addWidget(QLabel(f"Attack: {attack}"))
+        stats_layout.addWidget(QLabel(f"Defense: {defense}"))
+        stats_layout.addWidget(QLabel(f"Speed: {speed}"))
+        detail_layout.addLayout(stats_layout)
+
+        detail_window.setLayout(detail_layout)
+        detail_window.exec()
 
     def reset_draw(self):
         # Remove all tabs except the first one
