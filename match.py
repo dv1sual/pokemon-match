@@ -1,7 +1,9 @@
+import os
 import sys
 import random
 import math
 import requests
+import subprocess
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout,
     QHBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
@@ -11,6 +13,11 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QColor, QPixmap, QBrush, QPalette
 from io import BytesIO
 import pyttsx3
+import threading
+import queue
+from gtts import gTTS
+from pydub import AudioSegment
+from pydub.playback import play
 
 
 class PokemonBattlesClub(QMainWindow):
@@ -217,41 +224,35 @@ class PokemonBattlesClub(QMainWindow):
     def show_pokemon_details(self, pokemon_name):
         # Use the PokeAPI to get the Pokémon details
         api_url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name.lower()}"
+        species_url = f"https://pokeapi.co/api/v2/pokemon-species/{pokemon_name.lower()}"
 
         # Fetch the Pokémon data from the API
         response = requests.get(api_url)
         pokemon_data = response.json()
 
-        # Get the Pokémon species URL and fetch the species data
+        # Fetch the Pokémon species data to get the description
         species_url = pokemon_data["species"]["url"]
         species_response = requests.get(species_url)
         species_data = species_response.json()
 
-        # Extract the Pokémon description in English
+        # Extract the English description
         description = ""
         for entry in species_data["flavor_text_entries"]:
             if entry["language"]["name"] == "en":
-                description = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
+                description = entry["flavor_text"]
                 break
 
-        # Initialize the pyttsx3 engine
-        engine = pyttsx3.init()
+        # Use Google Text-to-Speech to generate an audio file
+        tts = gTTS(text=description, lang="en", tld="com.au")
+        tts.save("description_audio.mp3")
 
-        # Set the rate of speech
-        rate = engine.getProperty("rate")
-        engine.setProperty("rate", rate - 50)  # Lower the rate, making the speech slower
+        # Start a new thread to play the audio
+        def play_audio():
+            subprocess.run(["ffplay", "-nodisp", "-autoexit", "description_audio.mp3"])
+            os.remove("description_audio.mp3")
 
-        # Set the volume
-        volume = engine.getProperty("volume")
-        engine.setProperty("volume", volume + 0.40)  # Increase the volume slightly
-
-        # Choose a voice - id 0 - male, id 1 - female
-        voices = engine.getProperty("voices")
-        engine.setProperty("voice", voices[0].id)
-
-        # Read the Pokémon description aloud
-        engine.say(description)
-        engine.runAndWait()
+        play_thread = threading.Thread(target=play_audio)
+        play_thread.start()
 
         # Extract the necessary details (e.g., image URL, attack, defense, and speed)
         image_url = pokemon_data["sprites"]["front_default"]
@@ -259,6 +260,12 @@ class PokemonBattlesClub(QMainWindow):
         attack = stats["attack"]
         defense = stats["defense"]
         speed = stats["speed"]
+
+        # Get the Pokémon description
+        for flavor_text_entry in species_data["flavor_text_entries"]:
+            if flavor_text_entry["language"]["name"] == "en":
+                description = flavor_text_entry["flavor_text"]
+                break
 
         # Download the Pokémon image
         image_response = requests.get(image_url)
@@ -269,7 +276,7 @@ class PokemonBattlesClub(QMainWindow):
         pokemon_image.loadFromData(image_data.getvalue())
 
         # Create a new window (QDialog) for displaying the Pokémon details
-        detail_window = QDialog(self)
+        detail_window = QDialog(None)
         detail_window.setWindowTitle(f"{pokemon_name.capitalize()}")
         detail_layout = QVBoxLayout()
 
@@ -313,6 +320,8 @@ class PokemonBattlesClub(QMainWindow):
 
         detail_layout.addLayout(stats_layout)
         detail_window.setLayout(detail_layout)
+
+        # Show the detail window
         detail_window.exec()
 
     @staticmethod
