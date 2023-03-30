@@ -1,6 +1,21 @@
 QWidget {
+        font-family: "Helvetica Neue";
+        font-size: 12px;
+}
+QTableWidget {
+        font-family: "Helvetica Neue";
+        font-size: 12px;
+        gridline-color: #0075BE;               /* Grid Lines */
+        selection-background-color: #FFCC00;      /* Entry Selection */
+}
+QHeaderView::section {
+        background-color: #0075BE;     /* Pokemon 1 / 2  */
+        color: white;
+        padding: 5px;
+        border: 1px solid #FFCC00;     /* Pokemon 1 / 2 Borders*/
         font-family: "Pocket Monk";
-        font-size: 18px;
+        font-size: 24px;
+        font-weight: regular;
 }
 QPushButton {
         background-color: #0075BE;        /* Bottom Buttons */
@@ -18,12 +33,6 @@ QPushButton:pressed {
 QTableWidget {
         gridline-color: #0075BE;               /* Grid Lines */
         selection-background-color: #FFCC00;      /* Entry Selection */
-}
-QHeaderView::section {
-        background-color: #0075BE;     /* Pokemon 1 / 2  */
-        color: white;
-        padding: 5px;
-        border: 1px solid #FFCC00;     /* Pokemon 1 / 2 Borders*/
 }
 QTabWidget::pane {
         border: 1px solid #FFCC00;
