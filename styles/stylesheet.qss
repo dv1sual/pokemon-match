@@ -1,0 +1,65 @@
+QWidget {
+        font-family: "Helvetica Neue";
+        font-size: 12px;
+}
+QTableWidget {
+        font-family: "Helvetica Neue";
+        font-size: 12px;
+        gridline-color: #0075BE;               /* Grid Lines */
+        selection-background-color: #FFCC00;      /* Entry Selection */
+}
+QHeaderView::section {
+        background-color: #0075BE;     /* Pokemon 1 / 2  */
+        color: #FFCC00;
+        padding: 5px;
+        border: 1px solid #FFCC00;     /* Pokemon 1 / 2 Borders*/
+        font-family: "Pocket Monk";
+        font-size: 24px;
+        font-weight: regular;
+}
+QPushButton {
+        background-color: #0075BE;        /* Bottom Buttons */
+        color: white;                                  /* Buttons Text */
+        border: 1px solid #FFCC00;           /* Buttons Borders */
+        padding: 5px;
+        border-radius: 3px;
+}
+QPushButton:hover {
+        background-color: #0A285F;       /* Buttons Hover */
+}
+QPushButton:pressed {
+        background-color: #FFCC00;       /* Buttons Pressed */
+}
+QTableWidget {
+        gridline-color: #0075BE;               /* Grid Lines */
+        selection-background-color: #FFCC00;      /* Entry Selection */
+}
+QTabWidget::pane {
+        border: 1px solid #FFCC00;
+        background-color: #0A285F;
+}
+QTabWidget::tab-bar {
+        alignment: left;      /* Tabs Alignment */
+}
+QTabBar::tab {
+        background-color: #0075BE;
+        color: white;
+        padding: 5px;
+        border: 1px solid #FFCC00;
+        border-bottom-color: #FFCC00; /* same as the pane color */
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+}
+QTabBar::tab:selected {
+        border-color: #FFCC00;
+        border-bottom-color: #FFCC00; /* same as pane color */
+}
+QTabBar::tab:!selected {
+        margin-top: 2px; /* make non-selected tabs look smaller */
+}
+QTabBar::tab:hover {
+        background-color: #0A285F;
+}
+QTabBar::tab:selected:hover {
+        background-color: #0A285F;
+}

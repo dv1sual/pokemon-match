@@ -8,8 +8,9 @@ from PyQt6.QtWidgets import (
     QMessageBox, QLabel, QDialog, QProgressBar
 )
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QColor, QPixmap
+from PyQt6.QtGui import QFont, QColor, QPixmap, QBrush, QPalette
 from io import BytesIO
+import pyttsx3
 
 
 class PokemonBattlesClub(QMainWindow):
@@ -17,7 +18,7 @@ class PokemonBattlesClub(QMainWindow):
         super().__init__()
 
         # Read the list of Pokémon from the 'Pokémon.txt' file
-        with open('pokemons.txt', 'r') as f:
+        with open('resources/pokemons.txt', 'r') as f:
             pokemons = f.read().splitlines()
 
         # Store the initial number of participants
@@ -130,7 +131,7 @@ class PokemonBattlesClub(QMainWindow):
 
         # If it's the first round, read the list of Pokémon from the file
         if current_round == 0:
-            with open('pokemons.txt', 'r') as f:
+            with open('resources/pokemons.txt', 'r') as f:
                 pokemons = f.read().splitlines()
         else:
             # For subsequent rounds, use the winners from the previous round
@@ -220,6 +221,37 @@ class PokemonBattlesClub(QMainWindow):
         # Fetch the Pokémon data from the API
         response = requests.get(api_url)
         pokemon_data = response.json()
+
+        # Get the Pokémon species URL and fetch the species data
+        species_url = pokemon_data["species"]["url"]
+        species_response = requests.get(species_url)
+        species_data = species_response.json()
+
+        # Extract the Pokémon description in English
+        description = ""
+        for entry in species_data["flavor_text_entries"]:
+            if entry["language"]["name"] == "en":
+                description = entry["flavor_text"].replace("\n", " ").replace("\f", " ")
+                break
+
+        # Initialize the pyttsx3 engine
+        engine = pyttsx3.init()
+
+        # Set the rate of speech
+        rate = engine.getProperty("rate")
+        engine.setProperty("rate", rate - 50)  # Lower the rate, making the speech slower
+
+        # Set the volume
+        volume = engine.getProperty("volume")
+        engine.setProperty("volume", volume + 0.40)  # Increase the volume slightly
+
+        # Choose a voice - id 0 - male, id 1 - female
+        voices = engine.getProperty("voices")
+        engine.setProperty("voice", voices[0].id)
+
+        # Read the Pokémon description aloud
+        engine.say(description)
+        engine.runAndWait()
 
         # Extract the necessary details (e.g., image URL, attack, defense, and speed)
         image_url = pokemon_data["sprites"]["front_default"]
@@ -403,7 +435,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # Set the custom style sheet for the application
-    with open("stylesheet.qss", "r") as file:
+    with open("styles/stylesheet.qss", "r") as file:
         app.setStyleSheet(file.read())
 
     # Instantiate the main window for the PokemonBattlesClub application
