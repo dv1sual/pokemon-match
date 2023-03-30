@@ -5,7 +5,7 @@ import requests
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout,
     QHBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
-    QMessageBox, QLabel, QDialog
+    QMessageBox, QLabel, QDialog, QProgressBar
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QColor, QPixmap
@@ -232,27 +232,66 @@ class PokemonBattlesClub(QMainWindow):
         image_response = requests.get(image_url)
         image_data = BytesIO(image_response.content)
 
+        # Convert image_data into QPixmap
+        pokemon_image = QPixmap()
+        pokemon_image.loadFromData(image_data.getvalue())
+
         # Create a new window (QDialog) for displaying the Pokémon details
         detail_window = QDialog(self)
         detail_window.setWindowTitle(f"{pokemon_name.capitalize()}")
         detail_layout = QVBoxLayout()
 
+        # Create a new QVBoxLayout to place the image above and the stats below
+        image_and_stats_layout = QVBoxLayout()
+
         # Display the Pokémon image
         image_label = QLabel()
-        pixmap = QPixmap()
-        pixmap.loadFromData(image_data.getvalue())
-        image_label.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
-        detail_layout.addWidget(image_label)
+        pokemon_image = QPixmap()
+        pokemon_image.loadFromData(image_data.getvalue())
+        pokemon_image = pokemon_image.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio)  # Resize the QPixmap
+        image_label.setPixmap(pokemon_image)
+        image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        image_and_stats_layout.addWidget(image_label)  # Add the image to the new layout
 
         # Display the Pokémon statistics (attack, defense, and speed)
-        stats_layout = QHBoxLayout()
-        stats_layout.addWidget(QLabel(f"Attack: {attack}"))
-        stats_layout.addWidget(QLabel(f"Defense: {defense}"))
-        stats_layout.addWidget(QLabel(f"Speed: {speed}"))
-        detail_layout.addLayout(stats_layout)
+        stats_layout = QVBoxLayout()
 
+        # Set maximum values for each stat
+        max_attack = 200
+        max_defense = 200
+        max_speed = 200
+
+        # Create progress bars for attack, defense, and speed
+        attack_progress = self.create_progress_bar(attack, max_attack)
+        defense_progress = self.create_progress_bar(defense, max_defense)
+        speed_progress = self.create_progress_bar(speed, max_speed)
+
+        # Align the stats_layout to the center
+        stats_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        image_and_stats_layout.addLayout(stats_layout)  # Add the stats to the new layout
+        detail_layout.addLayout(image_and_stats_layout)  # Add the new layout to the detail_layout
+
+        # Add labels and progress bars to the stats_layout
+        stats_layout.addWidget(QLabel(f"Attack: {attack}/{max_attack}"))
+        stats_layout.addWidget(attack_progress)
+        stats_layout.addWidget(QLabel(f"Defense: {defense}/{max_defense}"))
+        stats_layout.addWidget(defense_progress)
+        stats_layout.addWidget(QLabel(f"Speed: {speed}/{max_speed}"))
+        stats_layout.addWidget(speed_progress)
+
+        detail_layout.addLayout(stats_layout)
         detail_window.setLayout(detail_layout)
         detail_window.exec()
+
+    @staticmethod
+    def create_progress_bar(value, max_value):
+        progress_bar = QProgressBar()
+        progress_bar.setRange(0, max_value)
+        progress_bar.setValue(value)
+        progress_bar.setFixedWidth(100)
+        progress_bar.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        progress_bar.setStyleSheet("QProgressBar::chunk { background-color: #FFCC00; }")
+        return progress_bar
 
     def reset_draw(self):
         # Remove all tabs except the first one

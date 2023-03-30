@@ -1,5 +1,6 @@
 QWidget {
-        font-family: "Helvetica Neue",
+        font-family: "Pocket Monk";
+        font-size: 18px;
 }
 QPushButton {
         background-color: #0075BE;        /* Bottom Buttons */
